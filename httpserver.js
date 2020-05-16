@@ -16,7 +16,13 @@ const requestListener = function (req, res) {
         console.log(req.url);
         switch (methodType) {
             case 'GET':
-                const employee = dataRetriever.findEmployee(url.substring(1));
+                const employeeId = url.substring(1);
+                const employee = dataRetriever.findEmployee(employeeId);
+                if(!employee){
+                    res.writeHead(400);
+                    res.end(`The employee with id ${employeeId} is not present.`);
+                    break;
+                }
                 prepareResponseHeaderObject(res);
                 res.writeHead(200);
                 res.end(JSON.stringify(employee));
