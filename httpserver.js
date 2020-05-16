@@ -1,10 +1,11 @@
 const http = require('http');
+const employeeData = require('./dummydata.js');
 const REQUIRED_CONTENT_TYPE = 'application/json';
 const ACCEPT_ENCODING_1 = 'application/json';
 const ACCEPT_ENCODING_2 = '*/*';
 const GET_URL_FORMAT = "";
 
-
+console.log(employeeData);
 const requestListener = function (req, res) {
 
     try{
@@ -16,6 +17,7 @@ const requestListener = function (req, res) {
 
     const methodType = req.method.toUpperCase();
     console.log(Object.getOwnPropertyNames(req));
+    console.log(req.url);
     switch(methodType){
         case 'GET':
             prepareResponseHeaderObject(res);
