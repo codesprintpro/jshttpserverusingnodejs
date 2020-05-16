@@ -1,5 +1,8 @@
 const http = require('http');
 const REQUIRED_CONTENT_TYPE = 'application/json';
+const ACCEPT_ENCODING_1 = 'application/json';
+const ACCEPT_ENCODING_2 = '*/*';
+
 
 const requestListener = function (req, res) {
 
@@ -35,7 +38,12 @@ const requestListener = function (req, res) {
 const entryCheck = function(req){
     const contentType = req.headers["content-type"];
     if(!contentType.includes(REQUIRED_CONTENT_TYPE)){
-        throw new Error("Sorry we don't support accept json format.");
+        throw new Error("Sorry we only support content type as json format.");
+    }
+
+    const accept = req.headers["accept"];
+    if(!(accept.includes(ACCEPT_ENCODING_1) || accept.includes(ACCEPT_ENCODING_2))){
+        throw new Error("Sorry we only support accept json format.");
     }
 }
 
