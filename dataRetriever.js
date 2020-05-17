@@ -7,6 +7,11 @@ let findEmployee = (id) => {
     });
 }
 
+let addEmployee = (employee) => {
+    employeeData.push(employee);
+}
+
 module.exports = {
-    findEmployee: findEmployee
+    findEmployee: findEmployee,
+    addEmployee: addEmployee
 }

@@ -16,21 +16,10 @@ const requestListener = function (req, res) {
         console.log(req.url);
         switch (methodType) {
             case 'GET':
-                const employeeId = url.substring(1);
-                const employee = dataRetriever.findEmployee(employeeId);
-                if(!employee){
-                    res.writeHead(400);
-                    res.end(`The employee with id ${employeeId} is not present.`);
-                    break;
-                }
-                prepareResponseHeaderObject(res);
-                res.writeHead(200);
-                res.end(JSON.stringify(employee));
+                getMethodHandler(url, req, res);
                 break;
             case 'POST':
-                prepareResponseHeaderObject(res);
-                res.writeHead(200);
-                res.end(`The request method type is ${methodType}`);
+                getRequestBodyAndGenerateResponse(req, res, postMethodHandler);
                 break;
             case 'PUT':
                 prepareResponseHeaderObject(res);
@@ -66,8 +55,46 @@ const prepareResponseHeaderObject = function (res) {
     res.setHeader('Cache-Control', 'no-cache');
 }
 
-const checkURLExpression = function (url, regex) {
+const getMethodHandler = (url, req, res) => {
+    const employeeId = url.substring(1);
+    const employee = dataRetriever.findEmployee(employeeId);
+    if (!employee) {
+        res.writeHead(400);
+        res.end(`The employee with id ${employeeId} is not present.`);
+        return;
+    }
+    prepareResponseHeaderObject(res);
+    res.writeHead(200);
+    res.end(JSON.stringify(employee));
+}
 
+const postMethodHandler = (req, res, body) => {
+
+    try {
+        let reqBody = body;
+        if (reqBody && reqBody._id && reqBody.name.first && reqBody.name.last && reqBody.phone) {
+            dataRetriever.addEmployee(reqBody);
+        } else {
+            throw new Error("Please enter all necessary details of employee object (id, name.first, name.last and phone).");
+        }
+        prepareResponseHeaderObject(res);
+        res.writeHead(200);
+        res.end(`The Employee object with id is ${reqBody._id} added.`);
+    } catch (error) {
+        res.writeHead(400);
+        res.end(error.message);
+    }
+}
+
+const getRequestBodyAndGenerateResponse = (req, res, callback) => {
+
+    let body = '';
+    req.on('data', chunk => {
+        body += chunk.toString();
+    });
+    req.on('end', () => {
+        callback(req, res, JSON.parse(body));
+    });
 }
 
 const server = http.createServer(requestListener);
