@@ -22,9 +22,7 @@ const requestListener = function (req, res) {
                 getRequestBodyAndGenerateResponse(req, res, postMethodHandler);
                 break;
             case 'PUT':
-                prepareResponseHeaderObject(res);
-                res.writeHead(200);
-                res.end(`The request method type is ${methodType}`);
+                getRequestBodyAndGenerateResponse(req, res, putMethodHandler);
                 break;
             case 'DELETE':
                 prepareResponseHeaderObject(res);
@@ -68,7 +66,7 @@ const getMethodHandler = (url, req, res) => {
     res.end(JSON.stringify(employee));
 }
 
-const postMethodHandler = (req, res, body) => {
+const postMethodHandler = (res, body) => {
 
     try {
         let reqBody = body;
@@ -86,6 +84,25 @@ const postMethodHandler = (req, res, body) => {
     }
 }
 
+const putMethodHandler = (res, body) => {
+    try {
+        let reqBody = body;
+        if (reqBody && reqBody._id && reqBody.name.first && reqBody.name.last && reqBody.phone) {
+            let response = dataRetriever.findAndReplace(reqBody);
+            if(!response)
+                throw new Error(`The Employee object with id is ${reqBody._id} not found.`);
+        } else {
+            throw new Error("Please enter all necessary details of employee object (id, name.first, name.last and phone).");
+        }
+        prepareResponseHeaderObject(res);
+        res.writeHead(200);
+        res.end(`The Employee object with id is ${reqBody._id} replaced.`);
+    } catch (error) {
+        res.writeHead(400);
+        res.end(error.message);
+    }
+}
+
 const getRequestBodyAndGenerateResponse = (req, res, callback) => {
 
     let body = '';
@@ -93,7 +110,7 @@ const getRequestBodyAndGenerateResponse = (req, res, callback) => {
         body += chunk.toString();
     });
     req.on('end', () => {
-        callback(req, res, JSON.parse(body));
+        callback(res, JSON.parse(body));
     });
 }
 
