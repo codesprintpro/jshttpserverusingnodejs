@@ -25,9 +25,7 @@ const requestListener = function (req, res) {
                 getRequestBodyAndGenerateResponse(req, res, putMethodHandler);
                 break;
             case 'DELETE':
-                prepareResponseHeaderObject(res);
-                res.writeHead(200);
-                res.end(`The request method type is ${methodType}`);
+                deleteMethodHandler(url, req, res);
                 break;
         }
     } catch (error) {
@@ -101,6 +99,19 @@ const putMethodHandler = (res, body) => {
         res.writeHead(400);
         res.end(error.message);
     }
+}
+
+const deleteMethodHandler = (url, req, res) => {
+    const employeeId = url.substring(1);
+    const response = dataRetriever.deleteEmployee(employeeId);
+    if (!response) {
+        res.writeHead(400);
+        res.end(`The employee with id ${employeeId} is not present.`);
+        return;
+    }
+    prepareResponseHeaderObject(res);
+    res.writeHead(200);
+    res.end(`The employee with id ${employeeId} is deleted.`);
 }
 
 const getRequestBodyAndGenerateResponse = (req, res, callback) => {

@@ -23,8 +23,21 @@ let findAndReplace = (employee) => {
     }
 }
 
+let deleteEmployee = (id) => {
+    let length = employeeData.length;
+    while (length--) {
+        if (employeeData[length]
+            && employeeData[length]["_id"] === id) {
+            employeeData.splice(length, 1);
+            return true;
+        }
+    }
+    return false;
+}
+
 module.exports = {
     findEmployee: findEmployee,
     addEmployee: addEmployee,
-    findAndReplace: findAndReplace
+    findAndReplace: findAndReplace,
+    deleteEmployee: deleteEmployee
 }
