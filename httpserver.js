@@ -3,7 +3,6 @@ const dataRetriever = require('./dataRetriever.js');
 const REQUIRED_CONTENT_TYPE = 'application/json';
 const ACCEPT_ENCODING_1 = 'application/json';
 const ACCEPT_ENCODING_2 = '*/*';
-const GET_URL_REGEX = "(\/)[A-Za-z0-9]+";
 
 const requestListener = function (req, res) {
 
